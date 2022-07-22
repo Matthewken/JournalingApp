@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("JournalDBConnection");
-builder.Services.AddDbContext<JournalBackEnd.Data.JournalDBContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<JournalingAppBackEnd.Data.JournalDBContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddControllers();
