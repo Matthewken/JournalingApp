@@ -8,8 +8,11 @@ SQL Server
 Chrome
 
 ## Web Stack
-ASP.NET 6 Core Web API
-AngularJS Front End
+ASP.NET 6 Core Web API with Entity Framework
+AngularJS
+
+## Database Requirement
+It is required that you setup a SQL Server Database and use the .sql files in the sql folder within the JournalingAppBackEnd project to create the required tables. You must also rename the **appsettings.json.example** file to **appsettings.json** and replace ***<SQL_CONNECTION_STRING>*** with your SQL Server's connection string.
 
 ## API Usage Instructions
 
