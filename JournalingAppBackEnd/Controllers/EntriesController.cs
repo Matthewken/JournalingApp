@@ -10,7 +10,7 @@ using JournalingAppBackEnd.Models;
 
 namespace JournalingAppBackEnd.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/journals/{journalID}/entries")]
     [ApiController]
     public class EntriesController : ControllerBase
     {
@@ -21,25 +21,28 @@ namespace JournalingAppBackEnd.Controllers
             _context = context;
         }
 
-        // GET: api/Entries
+        // GET: api/journals/{journalID}/entries
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Entry>>> GetEntries()
+        public async Task<ActionResult<List<Entry>>> GetEntries(int journalID)
         {
-          if (_context.Entries == null)
-          {
-              return NotFound();
-          }
-            return await _context.Entries.ToListAsync();
+            var journal = await _context.Journals.FindAsync(journalID);
+
+            if (journal == null || journal.Entries == null)
+            {
+                return NotFound();
+            }
+
+            return journal.Entries.ToList();
         }
 
-        // GET: api/Entries/5
+        // GET: api/journals/{journalID}/entries/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Entry>> GetEntry(int id)
+        public async Task<ActionResult<Entry>> GetEntry(int journalID, int id)
         {
-          if (_context.Entries == null)
-          {
-              return NotFound();
-          }
+            if (_context.Entries == null)
+            {
+                return NotFound();
+            }
             var entry = await _context.Entries.FindAsync(id);
 
             if (entry == null)
@@ -50,16 +53,12 @@ namespace JournalingAppBackEnd.Controllers
             return entry;
         }
 
-        // PUT: api/Entries/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT: api/journals/{journalID}/entries/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEntry(int id, Entry entry)
+        public async Task<IActionResult> PutEntry(int journalID, int id, Entry entry)
         {
-            if (id != entry.ID)
-            {
-                return BadRequest();
-            }
-
+            entry.ID = id;
+            entry.JournalId = journalID;
             _context.Entry(entry).State = EntityState.Modified;
 
             try
@@ -78,27 +77,40 @@ namespace JournalingAppBackEnd.Controllers
                 }
             }
 
-            return NoContent();
+            return CreatedAtAction("GetEntry", new { journalID = journalID, id = entry.ID }, entry);
         }
 
-        // POST: api/Entries
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST: api/journals/{journalID}/entries
         [HttpPost]
-        public async Task<ActionResult<Entry>> PostEntry(Entry entry)
+        public async Task<ActionResult<Entry>> PostEntry(int journalID, Entry entry)
         {
-          if (_context.Entries == null)
-          {
-              return Problem("Entity set 'JournalDBContext.Entries'  is null.");
-          }
+            if (_context.Entries == null)
+            {
+                return Problem("Entity set 'JournalDBContext.Entries'  is null.");
+            }
+
+            if (entry == null)
+            {
+                return Problem("Entry can not be empty");
+            }
+
+            var journal = await _context.Journals.FindAsync(journalID);
+            if (journal == null)
+            {
+                return NotFound("Journal not found by id");
+            }
+
+            entry.JournalId = journalID;
+
             _context.Entries.Add(entry);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEntry", new { id = entry.ID }, entry);
+            return CreatedAtAction("GetEntry", new { journalID = journalID, id = entry.ID }, entry);
         }
 
-        // DELETE: api/Entries/5
+        // DELETE: api/journals/{journalID}/entries/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEntry(int id)
+        public async Task<IActionResult> DeleteEntry(int journalID, int id)
         {
             if (_context.Entries == null)
             {

@@ -10,7 +10,7 @@ using JournalingAppBackEnd.Models;
 
 namespace JournalingAppBackEnd.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/journals")]
     [ApiController]
     public class JournalsController : ControllerBase
     {
@@ -21,26 +21,26 @@ namespace JournalingAppBackEnd.Controllers
             _context = context;
         }
 
-        // GET: api/Journals
+        // GET: api/journals
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Journal>>> GetJournals()
         {
-          if (_context.Journals == null)
-          {
-              return NotFound();
-          }
-            return await _context.Journals.ToListAsync();
+            if (_context.Journals == null)
+            {
+                return NotFound();
+            }
+            return await _context.Journals.Include(x => x.Entries).ToListAsync();
         }
 
-        // GET: api/Journals/5
+        // GET: api/journals/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Journal>> GetJournal(int id)
         {
-          if (_context.Journals == null)
-          {
-              return NotFound();
-          }
-            var journal = await _context.Journals.FindAsync(id);
+            if (_context.Journals == null)
+            {
+                return NotFound();
+            }
+            var journal = _context.Journals.Include(j => j.Entries).FirstOrDefault(j => j.ID == id);
 
             if (journal == null)
             {
@@ -50,8 +50,7 @@ namespace JournalingAppBackEnd.Controllers
             return journal;
         }
 
-        // PUT: api/Journals/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT: api/journals/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutJournal(int id, Journal journal)
         {
@@ -81,22 +80,22 @@ namespace JournalingAppBackEnd.Controllers
             return NoContent();
         }
 
-        // POST: api/Journals
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST: api/journals
         [HttpPost]
         public async Task<ActionResult<Journal>> PostJournal(Journal journal)
         {
-          if (_context.Journals == null)
-          {
-              return Problem("Entity set 'JournalDBContext.Journals'  is null.");
-          }
+            if (_context.Journals == null)
+            {
+                return Problem("Entity set 'JournalDBContext.Journals'  is null.");
+            }
+
             _context.Journals.Add(journal);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetJournal", new { id = journal.ID }, journal);
         }
 
-        // DELETE: api/Journals/5
+        // DELETE: api/journals/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteJournal(int id)
         {
