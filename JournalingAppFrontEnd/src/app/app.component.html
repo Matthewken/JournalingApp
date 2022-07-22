@@ -1,0 +1,14 @@
+<h1 id="label">Journals</h1>
+
+<p *ngIf="!journals"><em>Loading...</em></p>
+
+<ul *ngIf="journals">
+  <strong>Journal Names</strong>
+  <li *ngFor="let journal of journals">
+    {{journal.name}}
+    <ul *ngIf="journals.entries">
+      <strong>Journal Entries</strong>
+      <li *ngFor="let entry of journal.entries">{{entry.text}}</li>
+    </ul>
+  </li>
+</ul>
