@@ -1,0 +1,31 @@
+version: '3'
+
+volumes:
+  db-data:
+
+services:
+  journal-backend-api:
+    image: mcr.microsoft.com/dotnet/sdk:6.0
+    container_name: journal-backend-api
+    ports:
+      - "5121:5121"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:5121
+      ConnectionStrings__JournalDBConnection: Server=mssql;Database=JournalDB;User Id=SA;Password=Password1;
+    volumes:
+      - ./JournalingAppBackEnd:/JournalingAppBackEnd:cached
+    working_dir: /JournalingAppBackEnd
+    command: dotnet watch run --no-launch-profile
+
+  mssql:
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: mssql
+    environment:
+      ACCEPT_EULA: y
+      SA_PASSWORD: Password1
+    ports:
+      - 1433:1433
+    volumes:
+      - ./JournalingAppBackEnd/sql:/sql:cached
+      - db-data:/var/opt/mssql

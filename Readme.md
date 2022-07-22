@@ -47,3 +47,10 @@ I really enjoyed this exercise. I belive it aligns with what I expect the skill 
 etc)**
 Using Laravel, I'd setup a mysql database and create migrations using the same design as the SqlServer DB but a different naming convention to follow the standard.
 I would then created Eloquent Models and Controllers for both tables. The controllers would be generated using the artisan resource command to quickly scaffold all the crud. After adding the resource routes to the api.php file I would implement the frontend using vue.js as that would work nicely with Laravel tooling.
+
+## Dockerized
+
+```
+$ docker compose up -d
+$ docker compose exec -it mssql /opt/mssql-tools/bin/sqlcmd -U SA -P Password1 -i /sql/init.sql
+```
