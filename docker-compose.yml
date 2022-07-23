@@ -2,6 +2,7 @@ version: '3'
 
 volumes:
   db-data:
+  node_modules:
 
 services:
   journal-backend-api:
@@ -17,6 +18,19 @@ services:
       - ./JournalingAppBackEnd:/JournalingAppBackEnd:cached
     working_dir: /JournalingAppBackEnd
     command: dotnet watch run --no-launch-profile
+
+  journal-frontend:
+    image: node:16
+    container_name: journal-frontend
+    ports:
+      - "4200:4200"
+    environment:
+      API_SERVER: http://journal-backend-api:5121
+    volumes:
+      - ./JournalingAppFrontEnd:/JournalingAppFrontEnd:cached
+      - node_modules:/JournalingAppFrontEnd/node_modules
+    working_dir: /JournalingAppFrontEnd
+    command: bash -c "npm install && npx ng serve --disable-host-check --host 0.0.0.0"
 
   mssql:
     image: mcr.microsoft.com/azure-sql-edge
