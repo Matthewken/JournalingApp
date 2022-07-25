@@ -40,8 +40,8 @@ namespace JournalingAppBackEnd.Controllers
             {
                 return NotFound();
             }
-            var journal = _context.Journals.Include(j => j.Entries).FirstOrDefault(j => j.ID == id);
 
+            var journal = await _context.Journals.Include(j => j.Entries).FirstOrDefaultAsync(j => j.ID == id);
             if (journal == null)
             {
                 return NotFound();
@@ -103,7 +103,8 @@ namespace JournalingAppBackEnd.Controllers
             {
                 return NotFound();
             }
-            var journal = await _context.Journals.FindAsync(id);
+
+            var journal = await _context.Journals.Include(j => j.Entries).FirstOrDefaultAsync(j => j.ID == id);
             if (journal == null)
             {
                 return NotFound();

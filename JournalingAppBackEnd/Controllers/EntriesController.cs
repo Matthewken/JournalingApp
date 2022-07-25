@@ -25,8 +25,12 @@ namespace JournalingAppBackEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Entry>>> GetEntries(int journalID)
         {
-            var journal = await _context.Journals.FindAsync(journalID);
+            if (_context.Journals == null)
+            {
+                return Problem("Entity set 'JournalDBContext.Journals' is null.");
+            }
 
+            var journal = await _context.Journals.Include(j => j.Entries).FirstOrDefaultAsync(j => j.ID == journalID);
             if (journal == null || journal.Entries == null)
             {
                 return NotFound();
@@ -41,10 +45,10 @@ namespace JournalingAppBackEnd.Controllers
         {
             if (_context.Entries == null)
             {
-                return NotFound();
+                return Problem("Entity set 'JournalDBContext.Entries' is null.");
             }
-            var entry = await _context.Entries.FindAsync(id);
 
+            var entry = await _context.Entries.FindAsync(id);
             if (entry == null)
             {
                 return NotFound();
@@ -86,7 +90,12 @@ namespace JournalingAppBackEnd.Controllers
         {
             if (_context.Entries == null)
             {
-                return Problem("Entity set 'JournalDBContext.Entries'  is null.");
+                return Problem("Entity set 'JournalDBContext.Entries' is null.");
+            }
+
+            if (_context.Journals == null)
+            {
+                return Problem("Entity set 'JournalDBContext.Journals' is null.");
             }
 
             if (entry == null)
@@ -116,6 +125,7 @@ namespace JournalingAppBackEnd.Controllers
             {
                 return NotFound();
             }
+
             var entry = await _context.Entries.FindAsync(id);
             if (entry == null)
             {
