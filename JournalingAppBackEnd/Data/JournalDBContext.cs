@@ -9,8 +9,8 @@ namespace JournalingAppBackEnd.Data
         {
         }
 
-        public DbSet<Journal> Journals { get; set; }
-        public DbSet<Entry> Entries { get; set; }
+        public DbSet<Journal>? Journals { get; set; }
+        public DbSet<Entry>? Entries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
